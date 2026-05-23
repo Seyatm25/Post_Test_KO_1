@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("Penyusun Alkohol")
+st.title("Identifikasi Alkohol dan Uji Reaksi")
 
 # Jumlah karbon
 jumlah_c = st.number_input(
@@ -22,7 +22,7 @@ opsi = [
 
 gugus = []
 
-st.subheader("Pilih gugus")
+st.subheader("Susun Senyawa")
 
 for i in range(jumlah_c):
 
@@ -34,12 +34,21 @@ for i in range(jumlah_c):
 
     gugus.append(pilihan)
 
-if st.button("Buat Senyawa"):
+# Pilih pereaksi
+pereaksi = st.selectbox(
+    "Pilih Pereaksi",
+    [
+        "Lucas",
+        "Jones",
+        "Asam Kromat"
+    ]
+)
+
+if st.button("Analisis"):
 
     rumus = "".join(gugus)
 
     st.subheader("Rumus Struktur")
-
     st.code(rumus)
 
     # Identifikasi alkohol
@@ -67,11 +76,124 @@ if st.button("Buat Senyawa"):
 
         st.success(f"Alkohol {jenis}")
 
-        # Lucas
-        produk_lucas = rumus.replace("OH", "Cl")
+        # ======================
+        # UJI LUCAS
+        # ======================
 
-        st.subheader("Reaksi Lucas")
+        if pereaksi == "Lucas":
 
-        st.code(
-            f"{rumus} + HCl → {produk_lucas} + H2O"
-        )
+            produk = rumus.replace("OH", "Cl")
+
+            st.subheader("Hasil Uji Lucas")
+
+            st.code(
+                f"{rumus} + HCl → {produk} + H2O"
+            )
+
+            if jenis == "Primer":
+
+                st.info("Reaksi sangat lambat / tidak keruh")
+
+            elif jenis == "Sekunder":
+
+                st.info("Larutan keruh dalam beberapa menit")
+
+            elif jenis == "Tersier":
+
+                st.info("Larutan langsung keruh")
+
+        # ======================
+        # UJI JONES
+        # ======================
+
+        elif pereaksi == "Jones":
+
+            st.subheader("Hasil Uji Jones")
+
+            if jenis == "Primer":
+
+                produk = rumus.replace(
+                    "CH2(OH)",
+                    "COOH"
+                )
+
+                st.code(
+                    f"{rumus} + [O] → {produk}"
+                )
+
+                st.info(
+                    "Warna oranye berubah menjadi hijau"
+                )
+
+            elif jenis == "Sekunder":
+
+                produk = rumus.replace(
+                    "CH(OH)",
+                    "C=O"
+                )
+
+                st.code(
+                    f"{rumus} + [O] → {produk}"
+                )
+
+                st.info(
+                    "Warna oranye berubah menjadi hijau"
+                )
+
+            elif jenis == "Tersier":
+
+                st.code(
+                    "Tidak terjadi oksidasi"
+                )
+
+                st.info(
+                    "Warna tetap oranye"
+                )
+
+        # ======================
+        # ASAM KROMAT
+        # ======================
+
+        elif pereaksi == "Asam Kromat":
+
+            st.subheader("Hasil Reaksi Asam Kromat")
+
+            if jenis == "Primer":
+
+                produk = rumus.replace(
+                    "CH2(OH)",
+                    "COOH"
+                )
+
+                st.code(
+                    f"{rumus} + H2CrO4 → {produk}"
+                )
+
+                st.info(
+                    "Alkohol primer teroksidasi menjadi asam karboksilat"
+                )
+
+            elif jenis == "Sekunder":
+
+                produk = rumus.replace(
+                    "CH(OH)",
+                    "C=O"
+                )
+
+                st.code(
+                    f"{rumus} + H2CrO4 → {produk}"
+                )
+
+                st.info(
+                    "Alkohol sekunder teroksidasi menjadi keton"
+                )
+
+            elif jenis == "Tersier":
+
+                st.code(
+                    "Tidak bereaksi"
+                )
+
+                st.info(
+                    "Alkohol tersier sulit dioksidasi"
+                )
